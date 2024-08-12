@@ -8,10 +8,10 @@ commands:
       - run:
           name: Add Bazel Apt repository
           command: |
-            sudo apt install curl gnupg
-            curl -fsSL https://bazel.build/bazel-release.pub.gpg | gpg --dearmor > bazel.gpg
-            sudo mv bazel.gpg /etc/apt/trusted.gpg.d/
-            echo "deb [arch=amd64] https://storage.googleapis.com/bazel-apt stable jdk1.8" | sudo tee /etc/apt/sources.list.d/bazel.list
+            sudo apt install apt-transport-https curl gnupg -y
+            curl -fsSL https://bazel.build/bazel-release.pub.gpg | gpg --dearmor >bazel-archive-keyring.gpg
+            sudo mv bazel-archive-keyring.gpg /usr/share/keyrings
+            echo "deb [arch=amd64 signed-by=/usr/share/keyrings/bazel-archive-keyring.gpg] https://storage.googleapis.com/bazel-apt stable jdk1.8" | sudo tee /etc/apt/sources.list.d/bazel.list
       - run:
           name: Install Bazel from Apt
           command: sudo apt update && sudo apt install bazel
@@ -171,8 +171,8 @@ jobs:
 
 #Bazel test
   bazel_test:
-    docker:
-      - image: circleci/android:api-29
+    machine:
+      image: ubuntu-2404:2024.05.1
     environment:
       BAZEL_TARGET: << pipeline.parameters.target >>
       BAZEL_RUNS_PER_TEST: << pipeline.parameters.runs_per_test >>
@@ -199,13 +199,13 @@ jobs:
           key: bazel-cache-nightly-{{ .Environment.CIRCLE_JOB }}-{{ .Environment.CIRCLE_SHA1 }}
 
 workflows:
-  docs:
-    jobs:
-      - docs
+  # docs:
+  #   jobs:
+  #     - docs
   
-  ci:
-    jobs:
-      - build
+  # ci:
+  #   jobs:
+  #     - build
   
   nightly_fuzz_workflow:
     triggers:
@@ -245,38 +245,3 @@ workflows:
       - bazel_test
 
   
-
-# name: Nightly Fuzz
-# on:
-#   schedule:
-#     # Nightly at midnight -- uses UTC, so 7am.
-#     - cron:  '0 7 * * *'
-#   # This lets us trigger manually from the UI.
-#   workflow_dispatch:
-
-# jobs:
-#   build:
-#     name: Nightly Fuzz
-#     runs-on:
-#       labels: ubuntu-22.04-64core
-#     steps:
-#       - uses: actions/checkout@v2
-
-#       # We don't use action/cache nighlty workflows to ensure full reproducibility of the build.
-
-#       - name: Install dependencies via apt
-#         run: sudo apt-get install python3-distutils python3-dev python-is-python3 libtinfo5  build-essential liblapack-dev libblas-dev gfortran
-
-#       - name: Bazel Build Fuzz Driver (opt)
-#         run: |
-#           bazel build -c opt --noshow_progress xls/fuzzer:run_fuzz_multiprocess
-
-#       - name: Bazel Run Fuzz (opt)
-#         run: |
-#           bazel run -c opt xls/fuzzer:run_fuzz_multiprocess -- --crash_path "${GITHUB_WORKSPACE}/crashers" --sample_count=2048 --summary_path "${GITHUB_WORKSPACE}/crashers"
-
-#       - name: Upload Fuzz Crashers
-#         uses: actions/upload-artifact@v2
-#         with:
-#           name: crashers
-#           path: "${GITHUB_WORKSPACE}/crashers"
