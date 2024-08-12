@@ -163,7 +163,17 @@ jobs:
       BAZEL_RUNS_PER_TEST: << pipeline.parameters.runs_per_test >>
     steps:
       - checkout
-
+      
+      - run:
+          name: Install Bazel
+          command: |
+            sudo apt-get update && sudo apt-get install -y apt-transport-https curl gnupg
+            curl -fsSL https://bazel.build/bazel-release.pub.gpg | gpg --dearmor >bazel-archive-keyring.gpg
+            sudo mv bazel-archive-keyring.gpg /usr/share/keyrings/bazel-archive-keyring.gpg
+            echo "deb [signed-by=/usr/share/keyrings/bazel-archive-keyring.gpg] https://bazel.build/apt stable jdk1.8" | sudo tee /etc/apt/sources.list.d/bazel.list
+            sudo apt-get update && sudo apt-get install -y bazel
+            sudo apt-get upgrade -y bazel
+      
       - restore_cache:
           key: bazel-cache-nightly-{{ .Environment.CIRCLE_JOB }}-{{ .Environment.CIRCLE_SHA1 }}
       
