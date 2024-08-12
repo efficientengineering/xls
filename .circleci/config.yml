@@ -186,7 +186,7 @@ jobs:
           command: |
             sudo rm /etc/apt/sources.list.d/google-chrome.list
             sudo apt update
-            sudo apt-get install python3-distutils libtinfo5
+            
       - run:
           name: Install dependencies via apt
           command: |
