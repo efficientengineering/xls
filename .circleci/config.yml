@@ -64,6 +64,12 @@ jobs:
           keys:
             - bazel-cache-nightly-*
             - bazel-cache-
+      - run:
+          name: Clear Bazel Cache (if needed)
+          command: |
+            if [ -d "/home/circleci/.cache/bazel/_bazel_circleci/install" ]; then
+              rm -rf /home/circleci/.cache/bazel/_bazel_circleci/install/*
+            fi
       - run: sudo apt-get install python3-dev python-is-python3  build-essential liblapack-dev libblas-dev gfortran
       - run: |
           bazel build -c opt --noshow_progress --test_output=errors -- //xls/dslx:interpreter_main //xls/dslx/ir_convert:ir_converter_main //xls/tools:opt_main //xls/tools:codegen_main
