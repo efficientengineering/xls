@@ -45,15 +45,24 @@ jobs:
 
 
   build:
-    docker:
-      - image: circleci/android:api-29
+    machine:
+      image: ubuntu-2404:2024.05.1
+    environment:
+      BAZEL_TARGET: << pipeline.parameters.target >>
+      BAZEL_RUNS_PER_TEST: << pipeline.parameters.runs_per_test >>
     steps:
       - checkout
+      - setup-bazel
+      - run:
+          name: clean up
+          command: |
+            sudo rm /etc/apt/sources.list.d/google-chrome.list
+            sudo apt update
       - restore_cache:
           keys:
             - bazel-cache-nightly-*
             - bazel-cache-
-      - run: sudo apt-get install python3-distutils python3-dev python-is-python3 libtinfo5  build-essential liblapack-dev libblas-dev gfortran
+      - run: sudo apt-get install python3-dev python-is-python3  build-essential liblapack-dev libblas-dev gfortran
       - run: |
           bazel build -c opt --noshow_progress --test_output=errors -- //xls/dslx:interpreter_main //xls/dslx/ir_convert:ir_converter_main //xls/tools:opt_main //xls/tools:codegen_main
       - run: |
@@ -208,45 +217,45 @@ workflows:
   #   jobs:
   #     - docs
   
-  # ci:
+  ci:
+    jobs:
+      - build
+  
+  # nightly_fuzz_workflow:
+  #   triggers:
+  #     - schedule:
+  #         cron: "0 7 * * *"
+  #         filters:
+  #           branches:
+  #             only: main
   #   jobs:
-  #     - build
-  
-  nightly_fuzz_workflow:
-    triggers:
-      - schedule:
-          cron: "0 7 * * *"
-          filters:
-            branches:
-              only: main
-    jobs:
-      - nightly_fuzz
+  #     - nightly_fuzz
 
-  nightly_macos_workflow:
-    triggers:
-      - schedule:
-          cron: "0 7 * * *"
-          filters:
-            branches:
-              only: main  # Adjust to trigger on the appropriate branch
-    jobs:
-      - build_macos
+  # nightly_macos_workflow:
+  #   triggers:
+  #     - schedule:
+  #         cron: "0 7 * * *"
+  #         filters:
+  #           branches:
+  #             only: main  # Adjust to trigger on the appropriate branch
+  #   jobs:
+  #     - build_macos
 
-  nightly_ubuntu_workflow:
-    triggers:
-      - schedule:
-          cron: "0 7 * * *"
-          filters:
-            branches:
-              only: main
-    jobs:
-      - nightly_ubuntu:
-          filters:
-            branches:
-              only: main
+  # nightly_ubuntu_workflow:
+  #   triggers:
+  #     - schedule:
+  #         cron: "0 7 * * *"
+  #         filters:
+  #           branches:
+  #             only: main
+  #   jobs:
+  #     - nightly_ubuntu:
+  #         filters:
+  #           branches:
+  #             only: main
   
-  bazel_test_workflow:
-    jobs:
-      - bazel_test
+  # bazel_test_workflow:
+  #   jobs:
+  #     - bazel_test
 
   
