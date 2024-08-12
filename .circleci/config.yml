@@ -47,6 +47,7 @@ jobs:
   build:
     machine:
       image: ubuntu-2404:2024.05.1
+    resource_class: 2xlarge
     environment:
       BAZEL_TARGET: << pipeline.parameters.target >>
       BAZEL_RUNS_PER_TEST: << pipeline.parameters.runs_per_test >>
@@ -58,6 +59,7 @@ jobs:
           command: |
             sudo rm /etc/apt/sources.list.d/google-chrome.list
             sudo apt update
+            rm -rf /home/circleci/.cache/bazel/_bazel_circleci/install/937e6e0d806e40997135c14c1d61532a
       - restore_cache:
           keys:
             - bazel-cache-nightly-*
@@ -182,6 +184,7 @@ jobs:
   bazel_test:
     machine:
       image: ubuntu-2404:2024.05.1
+    resource_class: 2xlarge
     environment:
       BAZEL_TARGET: << pipeline.parameters.target >>
       BAZEL_RUNS_PER_TEST: << pipeline.parameters.runs_per_test >>
@@ -213,9 +216,9 @@ jobs:
           key: bazel-cache-nightly-{{ .Environment.CIRCLE_JOB }}-{{ .Environment.CIRCLE_SHA1 }}
 
 workflows:
-  # docs:
-  #   jobs:
-  #     - docs
+  docs:
+    jobs:
+      - docs
   
   ci:
     jobs:
@@ -254,8 +257,8 @@ workflows:
   #           branches:
   #             only: main
   
-  # bazel_test_workflow:
-  #   jobs:
-  #     - bazel_test
+  bazel_test_workflow:
+    jobs:
+      - bazel_test
 
   
