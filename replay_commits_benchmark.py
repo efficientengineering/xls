@@ -93,7 +93,7 @@ def load_logging_config(debug, file_path):
                 "class": "logging.FileHandler",
                 "formatter": "debugFormater",
                 "level": "DEBUG",
-                "filename": "/tmp/benchmark.log"
+                "filename": "benchmark.log"
             },
             "console": {
                 "class": "logging.StreamHandler",
@@ -319,7 +319,7 @@ def push_commits_one_by_one(args, repo, commits):
 
       config_path = args['config_path']
       main_tree = repo.heads.main.commit.tree
-      
+
       folders_from_main = {}
       for folder in [config_path]:
           for item in main_tree.traverse():
@@ -327,10 +327,7 @@ def push_commits_one_by_one(args, repo, commits):
                   folders_from_main[item.path] = BytesIO(item.data_stream.read()).getvalue()
 
       repo.head.reset(commit=commit, index=True, working_tree=True)
-      print("dirs: ", os.listdir('./configs/'))
-      shutil.move('./configs/.gitignore_benchmark', './.gitignore')
-      repo.git.add('.')
-      repo.index.commit("Committing gitignore")
+
       for path, data in folders_from_main.items():
           if os.path.exists(path):
               os.remove(path)
@@ -351,7 +348,7 @@ def push_commits_one_by_one(args, repo, commits):
 
       url = repo.remotes.origin.url
       token = os.getenv('GITHUB_TOKEN') 
-      repo.remotes.origin.set_url(f'https://{quote(token)}:x-oauth-basic@github.com/efficientengineering/xls')
+      repo.remotes.origin.set_url(f'https://{quote(token)}:x-oauth-basic@github.com/efficientengineering/react')
 
       print(f"Pushing commit {commit.hexsha} to branch {branch}")
       repo.git.push("--force", "origin", branch)
@@ -493,7 +490,7 @@ def delete_branches(repo, branches):
     original_url = repo.remotes.origin.url
     token = os.getenv('GITHUB_TOKEN') 
     
-    new_url = f'https://{quote(token)}:x-oauth-basic@github.com/efficientengineering/xls'
+    new_url = f'https://{quote(token)}:x-oauth-basic@github.com/efficientengineering/react'
     
     for branch in branches:
         try:
