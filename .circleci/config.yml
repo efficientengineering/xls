@@ -31,6 +31,7 @@ jobs:
           name: Run Replay Script
           # Add --branch branch_name to customize the branch used
           command: |
+                  ls -la ./configs/
                   python3 replay_commits_benchmark.py \
                     --upstream-repo-url $UPSTREAM_REPO \
                     --config-path $CONFIG_PATH \
