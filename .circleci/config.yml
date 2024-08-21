@@ -16,7 +16,6 @@ jobs:
       GITHUB_REPO_SLUG: efficientengineering/xls
       SHEETS_JOB_TAB: xls_job_data
       SHEETS_WORKFLOW_TAB: xls_workflow_data
-      CONFIG_PATH: configs/
     steps:
       - checkout
       - run:
