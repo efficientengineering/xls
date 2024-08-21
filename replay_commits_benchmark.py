@@ -328,10 +328,10 @@ def push_commits_one_by_one(args, repo, commits):
 
       repo.head.reset(commit=commit, index=True, working_tree=True)
 
-    #   for path, data in folders_from_main.items():
-    #       if os.path.exists(path):
-    #           os.remove(path)
-    #       export_blob(data, path)
+      for path, data in folders_from_main.items():
+          if os.path.exists(path):
+              os.rmdir(path)
+          export_blob(data, path)
 
       for folder in [".circleci", ".github"]:
           source_dir = os.path.join(args['working_repo_dir'], config_path, folder)
