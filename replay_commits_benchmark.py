@@ -331,6 +331,8 @@ def push_commits_one_by_one(args, repo, commits):
       for path, data in folders_from_main.items():
           if os.path.exists(path):
               os.remove(path)
+          else:
+            os.remove(path)
           export_blob(data, path)
 
       for folder in [".circleci", ".github"]:
