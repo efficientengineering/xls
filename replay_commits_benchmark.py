@@ -17,6 +17,7 @@ from pathlib import Path
 from time import sleep
 from copy import deepcopy
 from concurrent.futures import ThreadPoolExecutor
+import shutil
 
 LOGGER = logging.getLogger(__name__)
 
@@ -330,7 +331,7 @@ def push_commits_one_by_one(args, repo, commits):
 
       for path, data in folders_from_main.items():
           if os.path.exists(path):
-              os.rmdir(path)
+              shutil.rmtree(path)
           export_blob(data, path)
 
       for folder in [".circleci", ".github"]:
