@@ -349,7 +349,7 @@ def push_commits_one_by_one(args, repo, commits):
 
       url = repo.remotes.origin.url
       token = os.getenv('GITHUB_TOKEN') 
-      repo.remotes.origin.set_url(f'https://{quote(token)}:x-oauth-basic@github.com/efficientengineering/react')
+      repo.remotes.origin.set_url(f'https://{quote(token)}:x-oauth-basic@github.com/efficientengineering/xls')
 
       print(f"Pushing commit {commit.hexsha} to branch {branch}")
       repo.git.push("--force", "origin", branch)
@@ -491,7 +491,7 @@ def delete_branches(repo, branches):
     original_url = repo.remotes.origin.url
     token = os.getenv('GITHUB_TOKEN') 
     
-    new_url = f'https://{quote(token)}:x-oauth-basic@github.com/efficientengineering/react'
+    new_url = f'https://{quote(token)}:x-oauth-basic@github.com/efficientengineering/xls'
     
     for branch in branches:
         try:
