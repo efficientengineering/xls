@@ -1,0 +1,61 @@
+version: 2.1
+
+parameters:
+  run_daily_replay:
+    type: boolean
+    default: false
+
+jobs:
+  run_replay_job:
+    docker:
+      - image: cimg/python:3.12
+    resource_class: small
+    environment:
+      UPSTREAM_REPO: https://github.com/efficientengineering/xls.git
+      CIRCLECI_PROJECT_SLUG: a0c1da2e-4fdc-40db-ab43-9b635d9bfd71
+      GITHUB_REPO_SLUG: efficientengineering/xls
+      SHEETS_JOB_TAB: xls_job_data
+      SHEETS_WORKFLOW_TAB: xls_workflow_data
+      CONFIG_PATH: configs/
+    steps:
+      - checkout
+      - run:
+          name: Decode Google Service Account File
+          command: |
+            mkdir -p ~/.config/gspread/
+            echo -n ${GOOGLE_SERVICE_ACCOUNT} | base64 --decode > ~/.config/gspread/service_account.json
+      - run:
+          name: Install Python Requirements
+          command: pip install -r requirements.txt
+      - run:
+          name: Run Replay Script
+          # Add --branch branch_name to customize the branch used
+          command: |
+                  python3 replay_commits_benchmark.py \
+                    --upstream-repo-url $UPSTREAM_REPO \
+                    --config-path $CONFIG_PATH \
+                    --circleci-project-slug $CIRCLECI_PROJECT_SLUG \
+                    --github-repo-slug $GITHUB_REPO_SLUG \
+                    --google-sheet-id $GOOGLE_SHEETS_ID \
+                    --google-sheet-workflow-tab $SHEETS_WORKFLOW_TAB \
+                    --google-sheet-job-tab $SHEETS_JOB_TAB \
+                    --github-token $GITHUB_TOKEN \
+                    --circleci-token $CIRCLECI_TOKEN \
+                    --dump-json \
+                    --log-path .
+                    
+      - store_artifacts:
+          path: benchmark-computed.json
+      - store_artifacts:
+          path: benchmark-raw.json
+
+workflows:
+  daily_replay_workflow:
+    # when: << pipeline.parameters.run_daily_replay >>
+    jobs:
+      - run_replay_job:
+          context:
+            - react-benchmarking
+          filters:
+            branches:
+              only: main
