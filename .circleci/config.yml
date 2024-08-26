@@ -12,7 +12,7 @@ jobs:
     resource_class: small
     environment:
       UPSTREAM_REPO: https://github.com/efficientengineering/xls.git
-      CIRCLECI_PROJECT_SLUG: a0c1da2e-4fdc-40db-ab43-9b635d9bfd71
+      CIRCLECI_PROJECT_SLUG: circleci/a0c1da2e-4fdc-40db-ab43-9b635d9bfd71
       GITHUB_REPO_SLUG: efficientengineering/xls
       SHEETS_JOB_TAB: xls_job_data
       SHEETS_WORKFLOW_TAB: xls_workflow_data
