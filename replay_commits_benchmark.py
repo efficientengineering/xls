@@ -64,8 +64,8 @@ def main():
     # Parse the arguments passed in
     args = get_args()
 
-    # Configure logging
-    load_logging_config(args["debug"], args["log_path"])
+    # # Configure logging
+    # load_logging_config(args["debug"], args["log_path"])
 
     LOGGER.debug("Parsed arguments successfully!")
     run(parsed_args=args)
