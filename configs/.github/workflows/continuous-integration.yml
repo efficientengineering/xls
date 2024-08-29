@@ -2,19 +2,8 @@
 # See also: https://github.com/marketplace/actions/bazel-action
 
 name: Continuous Integration
-on:
-  # Avoid triggering on pushes to /all/ open PR branches.
-  push:
-    branches:
-      - main
-    paths-ignore:
-      # Do not trigger action when docs are updated.
-      - 'docs/**'
-  pull_request:
-    branches:
-      - main
-  # This lets us trigger manually from the UI.
-  workflow_dispatch:
+
+on: push
 
 jobs:
   build:
