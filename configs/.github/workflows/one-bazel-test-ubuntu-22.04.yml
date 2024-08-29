@@ -3,17 +3,7 @@
 
 name: Solo Bazel Test (Ubuntu 22.04)
 
-on:
-  workflow_dispatch:
-    inputs:
-      target:
-        description: 'Bazel Target Pattern'
-        default: '//xls/dslx:interpreter_test'
-        required: true
-      runs_per_test:
-        description: 'Number of Runs'
-        default: '1'
-        required: true
+on: push
 
 env:
   BAZEL_TARGET: ${{ github.event.inputs.target }}
