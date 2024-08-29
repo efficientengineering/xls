@@ -1,17 +1,13 @@
 # https://docs.github.com/en/actions/reference/workflow-syntax-for-github-actions
 # See also: https://github.com/marketplace/actions/bazel-action
 
-name: Solo Bazel Test (Ubuntu 22.04)
+name: Continuous Integration
 
 on: push
 
-env:
-  BAZEL_TARGET: ${{ github.event.inputs.target }}
-  BAZEL_RUNS_PER_TEST: ${{ github.event.inputs.runs_per_test }}
-
 jobs:
   build:
-    name: Bazel Test (opt)
+    name: Bazel Build (opt)
     runs-on:
       labels: ubuntu-22.04-64core
     timeout-minutes: 600
@@ -28,6 +24,10 @@ jobs:
       - name: Install dependencies via apt
         run: sudo apt-get install python3-distutils python3-dev python-is-python3 libtinfo5  build-essential liblapack-dev libblas-dev gfortran
 
-      - name: Bazel Test Target (opt)
+      - name: Bazel Build Tools (opt)
         run: |
-          bazel test -c opt --test_output=all --runs_per_test=$BAZEL_RUNS_PER_TEST -- $BAZEL_TARGET
+          bazel build -c opt --noshow_progress --test_output=errors -- //xls/dslx:interpreter_main //xls/dslx/ir_convert:ir_converter_main //xls/tools:opt_main //xls/tools:codegen_main
+
+      - name: Bazel Test All (opt)
+        run: |
+          bazel test -c opt --noshow_progress --test_output=errors -- //...
