@@ -187,7 +187,7 @@ jobs:
             bazel build -c opt --noshow_progress --test_output=errors -- //xls/dslx:interpreter_main //xls/dslx/ir_convert:ir_converter_main //xls/tools:opt_main //xls/tools:codegen_main
 
 #nightly-ubuntu  
-  nightly_ubuntu_machine:
+  nightly_machine:
     docker:
       - image: circleci/python:3.8
     environment:
@@ -311,23 +311,18 @@ workflows:
   nightly_fuzz_cloud:
     jobs:
       - nightly_fuzz_cloud
+  
+  nightly_fuzz_machine:
+    jobs:
+      - nightly_fuzz_machine
 
-  nightly_macos_workflow:
+  workflow_macos:
     jobs:
       - build_macos
 
-  # nightly_ubuntu_workflow:
-  #   triggers:
-  #     - schedule:
-  #         cron: "0 7 * * *"
-  #         filters:
-  #           branches:
-  #             only: main
-  #   jobs:
-  #     - nightly_ubuntu:
-  #         filters:
-  #           branches:
-  #             only: main
+  nightly_machine:
+    jobs:
+      - nightly_machine
   
   bazel_test_workflow_machine:
     jobs:
