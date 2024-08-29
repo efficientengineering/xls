@@ -27,7 +27,7 @@ parameters:
 
 jobs:
 # docs
-  docs:
+  docs_cloud:
     docker:
       - image: cimg/python:3.12.5
     steps:
@@ -44,7 +44,7 @@ jobs:
         # git commit -a -m "mkdocs generated documentation from ${LATEST_HASH}" && git push
 
 
-  build:
+  build_machine:
     machine:
       image: ubuntu-2404:2024.05.1
     resource_class: 2xlarge
@@ -81,7 +81,7 @@ jobs:
           key: bazel-cache-
 
 # nightly fuzz
-  nightly_fuzz:
+  nightly_fuzz_machine:
     docker:
       - image: circleci/python:3.8 
     steps:
@@ -117,7 +117,7 @@ jobs:
             bazel build -c opt --noshow_progress --test_output=errors -- //xls/dslx:interpreter_main //xls/dslx/ir_convert:ir_converter_main //xls/tools:opt_main //xls/tools:codegen_main
 
 #nightly-ubuntu  
-  nightly_ubuntu:
+  nightly_ubuntu_machine:
     docker:
       - image: circleci/python:3.8
     environment:
@@ -187,7 +187,7 @@ jobs:
           key: bazel-cache-nightly-{{ .Environment.RUNNER_OS }}-{{ .Environment.CIRCLE_SHA1 }}
 
 #Bazel test
-  bazel_test:
+  bazel_test_machine:
     machine:
       image: ubuntu-2404:2024.05.1
     resource_class: 2xlarge
@@ -222,13 +222,13 @@ jobs:
           key: bazel-cache-nightly-{{ .Environment.CIRCLE_JOB }}-{{ .Environment.CIRCLE_SHA1 }}
 
 workflows:
-  docs:
+  docs_cloud:
     jobs:
-      - docs
+      - docs_cloud
   
-  ci:
+  ci_machine:
     jobs:
-      - build
+      - build_machine
   
   # nightly_fuzz_workflow:
   #   triggers:
@@ -263,8 +263,8 @@ workflows:
   #           branches:
   #             only: main
   
-  bazel_test_workflow:
+  bazel_test_workflow_machine:
     jobs:
-      - bazel_test
+      - bazel_test_machine
 
   
