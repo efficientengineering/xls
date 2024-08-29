@@ -1,11 +1,6 @@
 name: Build MkDocs And Commit HTML
 
-on:
-  workflow_dispatch:
-    inputs:
-      xls-github-bot-pat:
-        description: 'The Personal Access Token (PAT) for the xls-github-bot user.'
-        required: true
+on: push
 
 
 jobs:
